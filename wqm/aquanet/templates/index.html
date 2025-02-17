@@ -1,0 +1,398 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquanet</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{%  static  'style.css' %}">
+</head>
+<body style="background-color: #f8f9fad7;">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.233);">
+        <div class="container-fluid">
+            <!-- Navbar Brand -->
+            <a class="navbar-brand d-flex align-items-center" href="/" style="margin-left: 2rem; font-size: 23px;">
+                <i class="fas fa-water" style="color: #1e88e5; font-size: 28px; margin-right: 8px;"></i>
+                <span><span style="color: rgb(218, 16, 16);">Aqu</span>anet</span>
+            </a>
+            <!-- Toggle Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Navbar Links -->
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ms-auto text-center">
+                    {% if request.user.is_authenticated %}
+                    {% comment %} <a class="nav-link mx-3 d-flex align-items-center" href="/"><i class="fas fa-home me-2"></i>Home</a> {% endcomment %}
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'contact' %}"><i class="fas fa-envelope me-2"></i>Contact</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'trackdata' %}"><i class="fas fa-chart-line me-2"></i>Track Data</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a> 
+                    <a class="nav-link mx-3 d-flex align-items-center" href="#"><i class="fas fa-user me-2"></i>{{ request.user }}</a> 
+                    {% else %}
+                    {% comment %} <a class="nav-link mx-3 d-flex align-items-center" href="/"><i class="fas fa-home me-2"></i>Home</a> {% endcomment %}
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'contact' %}"><i class="fas fa-envelope me-2"></i>Contact</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'trackdata' %}"><i class="fas fa-chart-line me-2"></i>Track Data</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'register' %}"><i class="fas fa-user-plus me-2"></i>Register</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'login' %}"><i class="fas fa-sign-in-alt  me-2"></i>Login</a>
+               {% endif %}
+                </div>
+        </div>
+    </div>
+    </nav>
+  <!-- Bootstrap Container -->
+<div id="floating-buttons" class="container position-fixed" style="z-index: 1050;">
+    <!-- Email Button -->
+    <div class="d-flex flex-column align-items-end mb-3" style="top: 75%; right: 2%; position: fixed;">
+        <button onclick="getalert()" class="btn p-0 rounded-circle" style="width: 65px; height: 65px; box-shadow: 2px 3px 2px 2px rgba(0, 0, 0, 0.233);">
+            <img src="{% static 'email.jpg' %}" alt="Email Logo" class="img-fluid rounded-circle">
+        </button>
+    </div>
+
+    <!-- WhatsApp Button -->
+    <div class="d-flex flex-column align-items-end mb-3" style="top: 86%; right: 2%; position: fixed;">
+        <button onclick="getMsgAlert();" class="btn p-0 rounded-circle" style="width: 65px; height: 65px; box-shadow: 2px 3px 2px 2px rgba(0, 0, 0, 0.233);">
+            <img src="{% static 'whatsapplogo.jpg' %}" alt="WhatsApp Logo" class="img-fluid rounded-circle">
+        </button>
+    </div>
+
+    
+</div>
+    <div class="container" style="margin-top: 100px;">
+        <h1 class="text-center mb-4">
+          <i class="fas fa-tachometer-alt" id="dashboardIcon" style="color:orangered;"></i> Dashboard
+        </h1>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <div class="dashboard-card" id="ph"  style="padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); border-bottom: 5px solid green;">
+              <h3 class="text-center">pH</h3>
+              <p class="text-center" id="phValue">{{ latest.ph | floatformat:1}} pH</p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="dashboard-card" id="turb" style="padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); border-bottom: 5px solid red;">
+              <h3 class="text-center"class="text-center">Turbidity</h3>
+              <p class="text-center" id="turbidityValue">{{latest.turbidity | floatformat:-1}} NTU</p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="dashboard-card" id="temp"  style="padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); border-bottom: 5px solid yellow;">
+              <h3 class="text-center">Temperature</h3>
+              <p class="text-center" id="temperatureValue">{{ latest.temperature | stringformat:'d'}} °C</p>
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="dashboard-card" id="con"  style="padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); border-bottom: 5px solid green;">
+              <h3 class="text-center">Conductivity</h3>
+              <p class="text-center"class="text-center" id="conductivityValue">{{ latest.conductivity | floatformat:0 }} µS/cm</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="popup" class="popup container-fluid">
+        <div class="container popup-content">  
+        <img src="{% static 'tick.jpeg' %}" alt="tick" id="popImg">
+            <h2 id="greet" class="text-center">hii</h2>
+            <p id="msg" class="text-center">dgdgdgfd</p>
+            <button id="closePopup" class=" close">OK</button>
+        </div>
+    </div>
+    <div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; text-align: center;">
+      <div style="position: relative; top: 50%; transform: translateY(-50%);">
+        <div class="spinner-border text-light" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p style="color: white; font-size: 1.2rem; margin-top: 10px;">Loading...</p>
+      </div>
+    </div>
+    <div class="container" style="margin-top: 70px;">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <canvas id="phChart" width="400" height="200"></canvas>
+            </div>
+            <div class="col-md-6 mb-4">
+                <canvas id="turbidityChart" width="400" height="200"></canvas>
+            </div>
+            <div class="col-md-6 mb-4">
+                <canvas id="temperatureChart" width="400" height="200"></canvas>
+            </div>
+            <div class="col-md-6 mb-4">
+                <canvas id="conductivityChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <footer  class="py-4" id="footer">
+        <div class="container">
+            <div class="row">
+                <!-- About Section -->
+                <div class="col-md-4">
+                    <h5>About Aquanet</h5>
+                    <p >
+                        Aquanet is a comprehensive water quality monitoring system that tracks key metrics like pH, turbidity, temperature, and conductivity, ensuring clean and safe water for all.
+                    </p>
+                </div>
+                <!-- Quick Links -->
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class=" "><i class="fas fa-home me-2"></i>Home</a></li>
+                        <li><a href="{% url 'contact' %}" class=" "><i class="fas fa-envelope me-2"></i>Contact</a></li>
+                        <li><a href="{% url 'register' %}" class=""><i class="fas fa-user-plus me-2"></i>Register</a></li>
+                        <li><a href="{% url 'trackdata' %}" class=" "><i class="fas fa-chart-line me-2"></i>Track Data</a></li>
+                    </ul>
+                </div>
+                <!-- Social Media -->
+                <div class="col-md-4 ">
+                    <h5>Follow Us</h5>
+                    <a href="#" class=" me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class=" me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class=" me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class=" me-2"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 Aquanet. All rights reserved.</p>
+            </div>
+        </div>
+     
+    </footer>
+    <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>   
+<script>
+        async function fetchData() {
+            {% comment %} const loader = document.getElementById("loader");
+            loader.style.display = "block"; // Show loader   {% endcomment %}
+            try{
+                const response = await fetch("{% url 'getData' %}");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            const data = await response.json();
+            console.log(data['items'])
+            //loader.style.display = "none"; // Hide loader
+            document.getElementById('phValue').textContent = data['items'].ph + " pH";
+            document.getElementById('turbidityValue').textContent = data['items'].turbidity + " NTU";
+            document.getElementById('temperatureValue').textContent = data['items'].temperature + " °C";
+            document.getElementById('conductivityValue').textContent = data['items'].conductivity + " µS/cm";
+            if(ph>=6.5 && ph <= 8.5)
+            {
+                document.getElementById("ph").style.borderColor = "green";
+            }
+            
+            document.getElementById("turb").style.borderColor = "green";
+            document.getElementById("con").style.borderColor = "yellow";
+            document.getElementById("temp").style.borderColor = "red";
+            }
+            catch (error) {
+                console.error("Error:", error);
+                //loader.style.display = "none"; // Hide loader on error
+                showPopup("Error", "Failed to retrieve the data. Please try again.");
+            }
+
+            
+          }
+          
+        //Email alert
+       async function getalert() {
+        const loader = document.getElementById("loader");
+        loader.style.display = "block"; // Show loader
+    
+        try {
+            const response = await fetch("{% url 'email_alert' %}");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(data);
+    
+            loader.style.display = "none"; // Hide loader
+            showPopup("Congratulations..!", data.msg);
+        } catch (error) {
+            console.error("Error:", error);
+            loader.style.display = "none"; // Hide loader on error
+            showPopup("Error", "Failed to send the email. Please try again.");
+        }
+    }  
+    
+    //Message alert
+    async function getMsgAlert() {
+        const loader = document.getElementById("loader");
+        loader.style.display = "block"; // Show loader
+    
+        try {
+            const response = await fetch("{% url 'message_alert' %}");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(data);
+    
+            loader.style.display = "none"; // Hide loader
+            showPopup("Congratulations..!", data.msg);
+        } catch (error) {
+            console.error("Error:", error);
+            loader.style.display = "none"; // Hide loader on error
+            showPopup("Error", "Failed to send the message. Please try again.");
+        }
+    }
+    const ph_data = {{ ph | safe }};
+    const temp_data = {{ temp | safe }};
+    const cond_data = {{ cond | safe }};
+    const turb_data = {{ turb | safe }};
+    const labels = {{ labels | safe }};
+    const phmin = 6.5;
+    const phmax = 8.5;
+    const tempmin = 0.0;
+    const tempmax = 30.0;
+    const turbmin = 0.0;
+    const turbmax = 5.0;
+    const conmin = 50.0;
+    const conmax = 1500.0;
+    function trigger(){
+    if( (ph_data >= phmin && ph_data <= phmax)){
+            console.log("Aquanet");
+        } 
+        else{
+            getalert();
+            getMsgAlert();
+        }
+    }
+    
+   
+    function showPopup(greeting, message) {
+        const popup = document.getElementById("popup");
+        const greet = document.getElementById("greet");
+        const msg = document.getElementById("msg");
+        const closePopupBtn = document.getElementById("closePopup");
+        
+       if(message === 'Email sent successfully!' || message === 'Message sent successfully to you!')
+       {
+        greet.innerHTML = greeting;
+        msg.innerHTML = message;
+       }
+       else{
+        greet.innerHTML ="Oops..!";
+        msg.innerHTML = message;
+        closePopupBtn.style.backgroundColor = "red";
+        document.getElementById('popImg').src="{% static 'wrong1.jpeg' %}";
+       }
+        
+        // Show popup
+        popup.style.display = "block";
+    
+        // Handle closing the popup
+        closePopupBtn.onclick = function () {
+            popup.style.display = "none";
+        };
+    
+        // Close popup if user clicks outside the popup content
+        window.onclick = function (event) {
+            if (event.target === popup) {
+                popup.style.display = "none";
+            }
+        };
+    }
+    
+      function generateData(){
+       const ph = Math.random()*14;
+       const temperature = Math.floor(Math.random()*100);
+       const conductivity = Math.floor(Math.random()*1500);
+       const turbidity = Math.floor(Math.random()*50);
+       let data = {
+        'ph':ph,
+        'temp':temperature,
+        'conduct':conductivity,
+        'turb':turbidity
+       }
+       fetch('{% url 'collect_data' %}',{
+        method:'POST',
+        credentials:'same-origin',
+        headers:{
+            'Accept':'application/json',
+            'Content-Type':'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken':'{{ csrf_token }}',
+
+        },
+        body:JSON.stringify(data),
+       })
+       .then(()=>{
+        console.log("Data sended successfully..");
+       })
+       .catch(()=>{
+        console.log("Error occured..");
+       });
+
+      }
+      setInterval(generateData, 40000);
+          // Call fetchData at intervals
+          setInterval(fetchData, 9000);
+          setInterval(trigger,120000);
+          trigger();
+            // Function to create a chart
+            function createChart(ctx, label, data, color) {
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        
+                        labels: labels, // Placeholder labels
+                        datasets: [
+                            {
+                                label: label,
+                                data: data, // Placeholder data
+                                borderColor: color,
+                                tension: 0.4,
+                                fill: false,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                        },
+                    },
+                });
+            }
+             // Wait until the page loads
+    window.onload = function () {
+        const dashboardIcon = document.getElementById('dashboardIcon');
+
+        // Add the rotation class
+        dashboardIcon.classList.add('rotate');
+
+        // Remove the rotation class after 3 seconds
+        setTimeout(() => {
+            dashboardIcon.classList.remove('rotate');
+        }, 6000); // Adjust time as needed
+    };
+    
+    
+    // Create individual charts
+    const phChartCtx = document.getElementById('phChart').getContext('2d');
+    createChart(phChartCtx, 'pH Levels', ph_data, '#42a5f5');
+    
+    const turbidityChartCtx = document.getElementById('turbidityChart').getContext('2d');
+    createChart(turbidityChartCtx, 'Turbidity', turb_data, '#66bb6a');
+    
+    const temperatureChartCtx = document.getElementById('temperatureChart').getContext('2d');
+    createChart(temperatureChartCtx, 'Temperature (°C)', temp_data, 'orangered');
+    
+    const conductivityChartCtx = document.getElementById('conductivityChart').getContext('2d');
+    createChart(conductivityChartCtx, 'Conductivity (µS/cm)', cond_data, '#ffa726');
+           
+    </script>
+    
+
+</body>
+</html>

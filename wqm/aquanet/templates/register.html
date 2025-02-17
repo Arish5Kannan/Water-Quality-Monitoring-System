@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Registration Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static  'style.css' %}">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .registration-form {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(78, 78, 78, 0.637);
+      padding: 30px;
+      max-width: 500px;
+      margin: 50px auto;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn-custom {
+      background-color: #000;
+      color: #fff;
+    }
+    .btn-custom:hover {
+      background-color: #0056b3;
+      color: #fff;
+    }
+    /* form input,form select{
+        border:1px solid #00000091 !important;
+    } */
+    form input:focus,select:focus{
+        box-shadow: 0px 0px 4px 4px  #0d0d0e3d !important;
+    }
+   
+
+  </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.233);">
+      <div class="container-fluid">
+          <!-- Navbar Brand -->
+          <a class="navbar-brand d-flex align-items-center" href="/" style="margin-left: 2rem; font-size: 23px;">
+              <i class="fas fa-water" style="color: #1e88e5; font-size: 28px; margin-right: 8px;"></i>
+              <span><span style="color: rgb(218, 16, 16);">Aqu</span>anet</span>
+          </a>
+          <!-- Toggle Button -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <!-- Navbar Links -->
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+              <div class="navbar-nav ms-auto text-center">
+                {% if request.user.is_authenticated %}
+                    <a class="nav-link mx-3 d-flex align-items-center" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'contact' %}"><i class="fas fa-envelope me-2"></i>Contact</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'trackdata' %}"><i class="fas fa-chart-line me-2"></i>Track Data</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a> 
+                    <a class="nav-link mx-3 d-flex align-items-center" href="#"><i class="fas fa-user me-2"></i>User</a> 
+                    {% else %}
+                    <a class="nav-link mx-3 d-flex align-items-center" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'contact' %}"><i class="fas fa-envelope me-2"></i>Contact</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'trackdata' %}"><i class="fas fa-chart-line me-2"></i>Track Data</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'register' %}"><i class="fas fa-user-plus me-2"></i>Register</a>
+                    <a class="nav-link mx-3 d-flex align-items-center" href="{% url 'login' %}"><i class="fas fa-sign-in-alt  me-2"></i>Login</a>
+               {% endif %}
+      </div>
+      </div>
+  </nav>
+
+  <div class="container">
+    <div class="registration-form" 
+         style="max-width: 500px; margin: 85px auto 20px; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); background: white;">
+      <h2 class="form-header" style="text-align: center; color: #444; margin-bottom: 25px; font-family: 'Montserrat', sans-serif;">Register</h2>
+      <form  method="POST" onsubmit="register(event);reset();" autocomplete="off">
+        {% csrf_token %}
+        <!-- Full Name -->
+        <div class="mb-3" style="position: relative;">
+          <i class="fas fa-user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #555;"></i>
+          <input type="text" id="name" class="form-control" placeholder="Your Full Name" required 
+                 style="background: #f0f3f8; border: none; padding: 12px 12px 12px 40px; border-radius: 10px; width: 100%; font-size: 16px;">
+        </div>
+  
+        <!-- Email -->
+        <div class="mb-3" style="position: relative;">
+          <i class="fas fa-envelope" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #555;"></i>
+          <input type="email" id="email" class="form-control" placeholder="Email Address" required 
+                 style="background: #f0f3f8; border: none; padding: 12px 12px 12px 40px; border-radius: 10px; width: 100%; font-size: 16px;">
+        </div>
+  
+        <!-- Mobile Number -->
+        <div class="mb-3" style="position: relative;">
+          <i class="fas fa-phone" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #555;"></i>
+          <input type="tel" id="number" class="form-control" placeholder="Whatsapp Number" required 
+                 style="background: #f0f3f8; border: none; padding: 12px 12px 12px 40px; border-radius: 10px; width: 100%; font-size: 16px;">
+        </div>
+  
+        <!-- Password -->
+        <div class="mb-3" style="position: relative;">
+          <i class="fas fa-lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #555;"></i>
+          <input type="password" class="form-control" placeholder="Create Password" required id="password"
+                 style="background: #f0f3f8; border: none; padding: 12px 12px 12px 40px; border-radius: 10px; width: 100%; font-size: 16px;">
+        </div>
+  
+        <!-- Gender -->
+        <div class="mb-3">
+          <select id="gender" class="form-select" required 
+                  style="background: #f0f3f8; border: none; padding: 12px; border-radius: 10px; width: 100%; font-size: 16px; color: #555;">
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+  
+        <!-- Agree to Terms -->
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="terms" required>
+          <label class="form-check-label" for="terms" style="font-size: 14px; color: #555;">I agree to the terms and conditions</label>
+        </div>
+  
+        <!-- Submit Button -->
+        <div class="d-grid">
+          <button type="submit" class="btn btn-light" 
+                  style="background: #6c63ff; color: #fff; border: none; padding: 12px 0; border-radius: 10px; font-size: 18px; font-weight: bold; font-family: 'Montserrat', sans-serif; cursor: pointer;">
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% comment %} popup content  {% endcomment %}
+  <!--
+  popup content for displaying alert messages
+  -->
+  <div id="popup" class="popup container-fluid">
+    <div class="container popup-content">  
+    <img src="{% static 'tick.jpeg' %}" alt="tick" id="popImg">
+        <h2 id="greet" class="text-center">hii</h2>
+        <p id="msg" class="text-center">dgdgdgfd</p>
+        <button id="closePopup" class=" close">OK</button>
+    </div>
+</div>
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; text-align: center;">
+  <div style="position: relative; top: 50%; transform: translateY(-50%);">
+    <div class="spinner-border text-light" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p style="color: white; font-size: 1.2rem; margin-top: 10px;">Loading...</p>
+  </div>
+</div>
+  <footer  class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-md-4">
+                <h5>About Aquanet</h5>
+                <p >
+                    Aquanet is a comprehensive water quality monitoring system that tracks key metrics like pH, turbidity, temperature, and conductivity, ensuring clean and safe water for all.
+                </p>
+            </div>
+            <!-- Quick Links -->
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                  <li><a href="/" class=" "><i class="fas fa-home me-2"></i>Home</a></li>
+                  <li><a href="{% url 'contact' %}" class=" "><i class="fas fa-envelope me-2"></i>Contact</a></li>
+                  <li><a href="{% url 'register'%}" class=""><i class="fas fa-user-plus me-2"></i>Register</a></li>
+                  <li><a href="{% url 'trackdata'  %}" class=" "><i class="fas fa-chart-line me-2"></i>Track Data</a></li>
+              </ul>
+            </div>
+            <!-- Social Media -->
+            <div class="col-md-4 ">
+                <h5>Follow Us</h5>
+                <a href="#" class=" me-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class=" me-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class=" me-2"><i class="fab fa-instagram"></i></a>
+                <a href="#" class=" me-2"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <hr class="bg-light">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2024 Aquanet. All rights reserved.</p>
+        </div>
+    </div>
+ 
+</footer>
+
+ 
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function register(event) {
+      event.preventDefault();
+    
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const number = document.getElementById('number').value;
+      const gender = document.getElementById('gender').value;
+    
+      const loader = document.getElementById('loader'); // Reference the loader
+    
+      let postObject = {
+        'Name': name,
+        'Email': email,
+        'Number': number,
+        'Password': password,
+        'Gender': gender,
+      };
+    
+      // Show loader
+      loader.style.display = 'block';
+    
+      fetch("{% url 'new_user' %}", {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify(postObject),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Hide loader
+          loader.style.display = 'none';
+    
+          if (data['msg'] == 'Registration successful') {
+            showPopup("Congratulations..!", data['msg']);
+          } else {
+            document.getElementById('popImg').src = "{% static 'wrong1.jpeg' %}";
+            showPopup("Oops..!", data['msg']);
+            document.getElementById('closePopup').style.backgroundColor = "red";
+          }
+        })
+        .catch((error) => {
+          console.error('There was a problem :', error);
+    
+          // Hide loader on error
+          loader.style.display = 'none';
+          document.getElementById('popImg').src = "{% static 'wrong1.jpeg' %}";
+            showPopup("Oops..!", data['msg']);
+            document.getElementById('closePopup').style.backgroundColor = "red";
+        });
+    }
+// Function to show the popup
+function showPopup(greeting, message) {
+  const popup = document.getElementById('popup');
+  const greet = document.getElementById('greet');
+  const msg = document.getElementById('msg');
+  const closePopupBtn = document.getElementById('closePopup');
+
+  greet.innerHTML = greeting;
+  msg.innerHTML = message;
+
+  // Show the popup
+  popup.style.display = "block";
+
+  // Handle closing the popup
+  closePopupBtn.onclick = function() {
+      popup.style.display = "none";
+      // Optional: Redirect or enable background elements
+      if(greeting==="Congratulations..!")
+      {
+        window.location.href="{% url 'login' %}";
+      }
+      else{
+        window.location.href="{% url 'register' %}"
+      }
+  };
+
+  // Close popup if user clicks outside the popup content
+  window.onclick = function(event) {
+      if (event.target === popup) {
+          popup.style.display = "none";
+          if(greeting==="Congratulations..!")
+          {
+            window.location.href="{% url 'login' %}";
+          }
+          else{
+            window.location.href="{% url 'register' %}"
+          }
+          
+      }
+  };
+}
+
+  </script>
+</body>
+</html>

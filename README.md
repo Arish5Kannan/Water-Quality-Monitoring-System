@@ -1,4 +1,3 @@
-# **README.md for WQMS (Water Quality Monitoring System) 🚰💧**  
 
 ## **🌟 WQMS - Water Quality Monitoring System**  
 

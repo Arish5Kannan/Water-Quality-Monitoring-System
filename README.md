@@ -150,13 +150,6 @@ def send_whatsapp_alert(number, message):
 
 ---
 
-## **📷 Screenshots**
-| Dashboard | Alerts |
-|-----------|--------|
-| ![Dashboard](screenshots/dashboard.png) | ![Alerts](screenshots/alerts.png) |
-
----
-
 ## **🛠️ Contributing**
 1. Fork the repo 🍴  
 2. Create a new branch (`git checkout -b feature-branch`)  
